@@ -18,10 +18,11 @@ UserAuthController.login = async (req,res,next) =>{
 
 UserAuthController.addUser = async(req,res,next) => {
     try {
-        const { name,email,mobile } = req.body;
+        const { name,email,mobile,alternateMobile } = req.body;
         const user = User({
             name:name,
             mobile:mobile,
+            alternateMobile:alternateMobile,
             email:email
         });
         await user.save();
@@ -49,7 +50,7 @@ UserAuthController.editUser = async (req,res,next) =>{
         const { id,name,email,mobile } = req.body;
         const user = await User.findByIdAndUpdate(
             { _id: id },
-            { name:name,email:email,mobile:mobile,updatedAt:Helper.currentTimeStamp() },
+            { name:name,email:email,mobile:mobile,alternateMobile:alternateMobile,updatedAt:Helper.currentTimeStamp() },
             { runValidator: true, useFindAndModify: false, new: true }
         );
         Helper.response(true,'User has been added Successfully!!',user,res,200);
