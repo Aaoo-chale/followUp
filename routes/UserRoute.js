@@ -43,7 +43,7 @@ check('alternateMobile')
 (req,res,next)=>{
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        Helper.response(false,'Some Error Occured!!',{errors:errors.array()},res,200);
+        Helper.response(false,'Validation Error!!',{errors:errors.array()},res,200);
     }else{
         UserAuthController.addUser(req,res,next);
     }
@@ -78,7 +78,7 @@ check('alternateMobile')
 (req,res,next)=>{
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        Helper.response(false,'Some Error Occured!!',{errors:errors.array()},res,200);
+        Helper.response(false,'Validation Error!!',{errors:errors.array()},res,200);
     }else{
         UserAuthController.editUser(req,res,next);
     }
@@ -88,7 +88,7 @@ check('id').not().isEmpty().withMessage('Id field is required'),
 (req,res,next)=>{
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        Helper.response(false,'Some Error Occured!!',{errors:errors.array()},res,200);
+        Helper.response(false,'Validation Error!!',{errors:errors.array()},res,200);
     }else{
         UserAuthController.deleteUser(req,res,next);
     }
@@ -101,7 +101,7 @@ UserRoute.group("/followup", (UserRoute) => {
     (req,res,next)=>{
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            Helper.response(false,'Some Error Occured!!',{errors:errors.array()},res,200);
+            Helper.response(false,'Validation Error!!',{errors:errors.array()},res,200);
         }else{
             FollowUpController.add(req,res,next);
         }
@@ -113,9 +113,38 @@ UserRoute.group("/followup", (UserRoute) => {
     (req,res,next)=>{
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            Helper.response(false,'Some Error Occured!!',{errors:errors.array()},res,200);
+            Helper.response(false,'Validation Error!!',{errors:errors.array()},res,200);
         }else{
             FollowUpController.upcoming(req,res,next);
+        }
+    });
+
+    //Visits Done
+    UserRoute.post('/visitDone',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.visitDone(req,res,next);
+    });
+
+    //Missed Followups
+    UserRoute.post('/missedFollowups',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.missedFollowups(req,res,next);  
+    });
+
+    UserRoute.post('/allFollowups',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.allFollowups(req,res,next);
+    });
+
+
+    UserRoute.post('/userReport',Authenticate,
+    check('userId').not().isEmpty().withMessage('userId field is Required!!'),
+    (req,res,next)=>{
+        const errors = validationResult(req);
+        if(!errors.isEmpty()){
+            Helper.response(false,'Validation Error!!',{errors:errors.array()},res,200);
+        }else{
+            FollowUpController.userReport(req,res,next);
         }
     });
 });
