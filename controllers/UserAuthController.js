@@ -47,7 +47,7 @@ UserAuthController.userList = async (req,res,next) => {
 
 UserAuthController.editUser = async (req,res,next) =>{
     try{
-        const { id,name,email,mobile } = req.body;
+        const { id,name,email,mobile,alternateMobile } = req.body;
         const user = await User.findByIdAndUpdate(
             { _id: id },
             { name:name,email:email,mobile:mobile,alternateMobile:alternateMobile,updatedAt:Helper.currentTimeStamp() },
@@ -55,6 +55,7 @@ UserAuthController.editUser = async (req,res,next) =>{
         );
         Helper.response(true,'User has been added Successfully!!',user,res,200);
     } catch (error) {
+        console.log(error);
         Helper.response(false,'Some Error Occured!!',{errors:error},res,200);
     }
 }

@@ -22,7 +22,7 @@ UserRoute.post('/addUser',Authenticate,
 check('name').not().isEmpty().withMessage('Name field is required'),
 check('mobile').not().isEmpty().withMessage('Mobile field is required')
 .custom((value,{ req }) => {
-    return User.findOne({ $or : [{mobile: value},{alternateMobile:value}]}) 
+    return User.findOne({ $or : [{mobile: value},{alternateMobile:value}],deletedAt:null}) 
     .then((user) => {  
         if(user){
             return Promise.reject('Mobile has been already taken!!')
@@ -32,7 +32,7 @@ check('mobile').not().isEmpty().withMessage('Mobile field is required')
 check('alternateMobile')
 .custom((value,{ req }) => {
     if(value != '' || value != null){
-        return User.findOne({ $or : [{mobile: value},{alternateMobile:value}]}) 
+        return User.findOne({ $or : [{mobile: value},{alternateMobile:value}],deletedAt:null}) 
         .then((user) => {  
             if(user){
                 return Promise.reject('Alternate Mobile has been already taken!!')
@@ -57,7 +57,7 @@ check('id').not().isEmpty().withMessage('Id field is required'),
 check('name').not().isEmpty().withMessage('Name field is required'),
 check('mobile').not().isEmpty().withMessage('Mobile field is required')
 .custom((value,{ req }) => {
-    return User.findOne({ $or : [{mobile: value},{alternateMobile:value}]}) 
+    return User.findOne({ $or : [{mobile: value},{alternateMobile:value}],deletedAt:null}) 
     .then((user) => {  
         if(user && user._id != req.body.id){
             return Promise.reject('Mobile has been already taken!!')
@@ -67,7 +67,7 @@ check('mobile').not().isEmpty().withMessage('Mobile field is required')
 check('alternateMobile')
 .custom((value,{ req }) => {
     if(value != '' || value != null){
-        return User.findOne({ $or : [{mobile: value},{alternateMobile:value}]}) 
+        return User.findOne({ $or : [{mobile: value},{alternateMobile:value}],deletedAt:null}) 
         .then((user) => {  
             if(user && user._id != req.body.id){
                 return Promise.reject('Alternate Mobile has been already taken!!')
