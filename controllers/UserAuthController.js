@@ -17,7 +17,7 @@ UserAuthController.login = async (req,res,next) =>{
 };
 
 UserAuthController.addUser = async(req,res,next) => {
-    try {
+    try { 
         const { name,email,mobile,alternateMobile } = req.body;
         const user = User({
             name:name,

@@ -131,6 +131,12 @@ UserRoute.group("/followup", (UserRoute) => {
         FollowUpController.missedFollowups(req,res,next);  
     });
 
+    //Not Interested Users
+    UserRoute.post('/notInterestedUsers',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.notInterestedUsers(req,res,next);  
+    });
+
     UserRoute.post('/allFollowups',Authenticate,
     (req,res,next)=>{
         FollowUpController.allFollowups(req,res,next);

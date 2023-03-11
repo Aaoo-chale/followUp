@@ -10,7 +10,7 @@ FollowUpController.add = async(req,res,next) => {
         const follow = Follow({
             userId          : userId,
             type            : type,
-            nextfollowup    : Helper.DateFormat(nextfollowup),
+            nextfollowup    : (nextfollowup == '' || nextfollowup== null ) ? null : Helper.DateFormat(nextfollowup),
             remark          : remark,
         });
         await follow.save();
@@ -217,7 +217,48 @@ FollowUpController.userReport = async (req,res,next) => {
             Helper.response(false,'No Followup Data Found!!',{},res,200);
         }
     } catch (error) {
-        console.log(error);
+        Helper.response(false,'Some Error Occured!!',{errors:error},res,200);
+    }
+}
+
+
+FollowUpController.notInterestedUsers = async (req,res,next) => {
+    try{
+        const notInterested = await Follow.aggregate([
+            {$lookup:
+                {
+                    from:"users",
+                    localField:"userId",
+                    foreignField:"_id",
+                    as:"user"
+                }
+            },
+            {$sort:{createdAt:-1}}
+        ]);
+        var singleUserId = [];
+        var notInterestedData = [];
+        notInterested.map((u)=>{
+            if(!singleUserId.includes(u.userId.toString())){
+                if(u.type == 'Not Interested'){
+                    d = {
+                        ...u,
+                        user:{
+                            name:u.user[0].name,
+                            email:u.user[0].email,
+                            mobile:u.user[0].mobile
+                        }
+                    }
+                    notInterestedData.push(d);
+                }
+                singleUserId.push(u.userId.toString());
+            }
+        });
+        if(notInterestedData.length > 0){
+            Helper.response(true,'Not Interested Users data get Successfully!!',notInterestedData,res,200);
+        }else{
+            Helper.response(false,'No Not Interested Users Found!!',{},res,200);
+        }
+    } catch (error) {
         Helper.response(false,'Some Error Occured!!',{errors:error},res,200);
     }
 }
