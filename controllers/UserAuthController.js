@@ -35,8 +35,8 @@ UserAuthController.addUser = async(req,res,next) => {
 UserAuthController.userList = async (req,res,next) => {
     try {
         const user = await User.find({deletedAt:null}).sort({createdAt:-1}).select("-__v");
-        if(user == null){
-            Helper.response(false,'No User Found!!',res,200);
+        if(user.length < 1){
+            Helper.response(false,'No User Found!!',{},res,200);
         }else{
             Helper.response(true,'User list has been get Successfully!!',user,res,200);
         }
