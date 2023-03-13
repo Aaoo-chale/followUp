@@ -238,20 +238,18 @@ FollowUpController.notInterestedUsers = async (req,res,next) => {
         var singleUserId = [];
         var notInterestedData = [];
         notInterested.map((u)=>{
-            if(!singleUserId.includes(u.userId.toString())){
-                if(u.type == 'Not Interested'){
-                    d = {
-                        ...u,
-                        user:{
-                            name:u.user[0].name,
-                            email:u.user[0].email,
-                            mobile:u.user[0].mobile
-                        }
+            if(u.type == 'Not Interested'){
+                d = {
+                    ...u,
+                    user:{
+                        name:u.user[0].name,
+                        email:u.user[0].email,
+                        mobile:u.user[0].mobile
                     }
-                    notInterestedData.push(d);
                 }
-                singleUserId.push(u.userId.toString());
+                notInterestedData.push(d);
             }
+            singleUserId.push(u.userId.toString());
         });
         if(notInterestedData.length > 0){
             Helper.response(true,'Not Interested Users data get Successfully!!',notInterestedData,res,200);
