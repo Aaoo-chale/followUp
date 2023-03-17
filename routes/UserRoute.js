@@ -153,6 +153,23 @@ UserRoute.group("/followup", (UserRoute) => {
             FollowUpController.userReport(req,res,next);
         }
     });
+
+
+    UserRoute.post('/othersReport',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.othersReport(req,res,next);
+    });
+
+
+    UserRoute.post('/visitReport',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.visitReport(req,res,next);
+    });
+
+    UserRoute.post('/reVisitReport',Authenticate,
+    (req,res,next)=>{
+        FollowUpController.reVisitReport(req,res,next);
+    });
 });
   
 module.exports = UserRoute;

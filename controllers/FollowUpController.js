@@ -262,5 +262,147 @@ FollowUpController.notInterestedUsers = async (req,res,next) => {
 }
 
 
+FollowUpController.othersReport = async (req,res,next) => {
+    try{
+        const others = await Follow.aggregate([
+            {$lookup:
+                {
+                    from:"users",
+                    localField:"userId",
+                    foreignField:"_id",
+                    as:"user"
+                }
+            },
+            {$match:{type:"Others"}},
+            {$sort:{createdAt:-1}}
+        ]);
+        var singleUserId = [];
+        var othersData = [];
+        others.map((u)=>{
+            //if(!singleUserId.includes(u.userId.toString())){
+                d = {
+                    ...u,
+                    user:{
+                        name:u.user[0].name,
+                        email:u.user[0].email,
+                        mobile:u.user[0].mobile
+                    }
+                }
+                othersData.push(d);
+                singleUserId.push(u.userId.toString());
+            //}
+        });
+        if(othersData.length > 0){
+            Helper.response(true,'Others Followup data get Successfully!!',othersData,res,200);
+        }else{
+            Helper.response(false,'No Others Followup Data Found!!',{},res,200);
+        }
+    } catch (error) {
+        Helper.response(false,'Some Error Occured!!',{errors:error},res,200);
+    }
+}
+
+
+FollowUpController.visitReport = async (req,res,next) => {
+    try{
+        const others = await Follow.aggregate([
+            {$lookup:
+                {
+                    from:"users",
+                    localField:"userId",
+                    foreignField:"_id",
+                    as:"user"
+                }
+            },
+            {$match:{type:{$in:["Next Visit","Visit Done"]}}},
+            {$sort:{createdAt:-1}}
+        ]);
+        var singleUserId = [];
+        var othersData = [];
+        others.map((u)=>{
+            //if(!singleUserId.includes(u.userId.toString())){
+                d = {
+                    ...u,
+                    user:{
+                        name:u.user[0].name,
+                        email:u.user[0].email,
+                        mobile:u.user[0].mobile
+                    }
+                }
+                othersData.push(d);
+                singleUserId.push(u.userId.toString());
+            //}
+        });
+        if(othersData.length > 0){
+            Helper.response(true,'Others Followup data get Successfully!!',othersData,res,200);
+        }else{
+            Helper.response(false,'No Others Followup Data Found!!',{},res,200);
+        }
+    } catch (error) {
+        Helper.response(false,'Some Error Occured!!',{errors:error},res,200);
+    }
+}
+
+FollowUpController.reVisitReport = async (req,res,next) => {
+    try{
+        const reVisit = await User.aggregate([
+            {$lookup:
+                {
+                    from:"follows",
+                    localField:"_id",
+                    foreignField:"userId",
+                    as:"follow"
+                } 
+            }
+        ]);
+        var userId = [];
+        reVisit.map((r)=>{
+            count = 0;
+            r.follow.map((f)=>{
+                if(f.type == 'Next Visit' || f.type == 'Next Followup'){
+                    count++;
+                }
+            });
+            if(count >= 2){
+                userId.push(new ObjectId(r._id));
+            }
+        });
+        const others = await Follow.aggregate([
+            {$lookup:
+                {
+                    from:"users",
+                    localField:"userId",
+                    foreignField:"_id",
+                    as:"user"
+                }
+            },
+            {$match:{type:{$in:["Next Visit","Next Followup"]},userId:{$in:userId}}},
+            {$sort:{createdAt:-1}}
+        ]);
+        var singleUserId = [];
+        var othersData = [];
+        others.map((u)=>{
+            if(!singleUserId.includes(u.userId.toString())){
+                d = {
+                    ...u,
+                    user:{
+                        name:u.user[0].name,
+                        email:u.user[0].email,
+                        mobile:u.user[0].mobile
+                    }
+                }
+                othersData.push(d);
+                singleUserId.push(u.userId.toString());
+            }
+        });
+        if(othersData.length > 0){
+            Helper.response(true,'Others Followup data get Successfully!!',othersData,res,200);
+        }else{
+            Helper.response(false,'No Others Followup Data Found!!',{},res,200);
+        }
+    } catch (error) {
+        Helper.response(false,'Some Error Occured!!',{errors:error},res,200);
+    }
+}
 
 module.exports = FollowUpController;
